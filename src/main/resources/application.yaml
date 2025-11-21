@@ -1,0 +1,30 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: logistique-system-complet
+  data:
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/logistique_db}
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+
+jwt:
+  secret: ${JWT_SECRET}
+  issuer: "LogistiqueSystem"
+  expiration-ms: 3600000 # 1 hour
+
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+
+logging:
+  level:
+    com.logistique: DEBUG
+    org.springframework.security: INFO
