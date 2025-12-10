@@ -17,7 +17,15 @@ public class JwtUtil {
     private Long expiration;
 
     private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(secret.getBytes());
+        // Utilisez au moins 32 octets pour HS256
+        byte[] keyBytes = secret.getBytes();
+        if (keyBytes.length < 32) {
+            // Padding si nécessaire
+            byte[] padded = new byte[32];
+            System.arraycopy(keyBytes, 0, padded, 0, Math.min(keyBytes.length, 32));
+            keyBytes = padded;
+        }
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String generateToken(String username, String role, String userId) {
