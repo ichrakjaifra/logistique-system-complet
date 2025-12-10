@@ -6,12 +6,13 @@ import com.logistique.logistique_system_complet.model.Colis;
 import com.logistique.logistique_system_complet.service.ColisService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/transporteur/colis")
@@ -66,10 +67,23 @@ public class TransporteurColisController {
 
         String transporteurId = getCurrentUserId(authentication);
         Pageable pageable = PageRequest.of(page, size);
-        Page<Colis> colisPage = colisService.filterColisByStatut(statut, pageable)
-                .filter(colis -> colis.getTransporteurId() != null && colis.getTransporteurId().equals(transporteurId));
 
-        Page<ColisResponse> responsePage = colisPage.map(colisMapper::toResponse);
+        // Récupérer tous les colis du transporteur
+        Page<Colis> mesColis = colisService.getColisByTransporteur(transporteurId, pageable);
+
+        // Filtrer par statut
+        List<Colis> filteredList = mesColis.getContent().stream()
+                .filter(colis -> colis.getStatut() == statut)
+                .collect(Collectors.toList());
+
+        // Créer une nouvelle Page avec les résultats filtrés
+        Page<Colis> filteredPage = new PageImpl<>(
+                filteredList,
+                pageable,
+                filteredList.size()
+        );
+
+        Page<ColisResponse> responsePage = filteredPage.map(colisMapper::toResponse);
         return ResponseEntity.ok(responsePage);
     }
 
@@ -87,6 +101,6 @@ public class TransporteurColisController {
     }
 
     private String getCurrentUserId(Authentication authentication) {
-        return authentication.getName();
+        return authentication.getName(); // Le subject du JWT contient le userId
     }
 }
