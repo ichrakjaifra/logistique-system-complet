@@ -1,4 +1,4 @@
-# 📦 LOGISTIX – Système de Gestion de Colis et Transporteurs
+# 📦 logistique-system-complet – Système de Gestion de Colis et Transporteurs
 
 <div align="center">
 
@@ -124,7 +124,7 @@ L’architecture exploite le **schéma flexible de MongoDB**, intègre les **bon
 
 ### Installation
 ```
-git clone https://github.com/ichrakjaifra/logistix-api.git
+git clone https://github.com/ichrakjaifra/logistique-system-complet.git
 cd logistix-api
 ```
 ### Lancement avec Docker
